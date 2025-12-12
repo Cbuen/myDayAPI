@@ -10,9 +10,11 @@ from .models import TodoList, Todo
 API View can only implicitly call get, delete, etc
 to define custom requests, we must define helper function
 """
+
+
 class TodoListView(APIView):
     # helper function
-    def get_object(self,pk):
+    def get_object(self, pk):
         try:
             return TodoList.objects.get(pk=pk)
         except TodoList.DoesNotExist:
@@ -27,7 +29,7 @@ class TodoListView(APIView):
             return Response(serializer.data)
 
         return Response(serializer.data)
-    
+
     def delete(self, request, pk=None, format=None):
         if pk:
             self.get_object(pk)
@@ -46,7 +48,8 @@ class TodoListView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
+
 # TODO: pk usage for getting a single todo object from database
 class TodoView(APIView):
     def get_object(self, pk):
@@ -66,15 +69,16 @@ class TodoView(APIView):
         if len(serializer.data) == 0:
             return Response(status.HTTP_204_NO_CONTENT)
         return Response(serializer.data)
-    
+
     def post(self, request):
         serializer = TodoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         todo = self.get_object(pk)
         todo.delete()
         return Response(status=status.HTTP_200_OK)
-        
