@@ -88,14 +88,34 @@ class TodoView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-"""
-TODO: finish this api endpoint incorp get object with pk etc
-"""
-
-
 class HomeworkView(APIView):
 
-    def get(self, request):
+    def get_object(self, pk):
+        try:
+            homework = Homework.objects.get(pk=pk)
+            return homework
+        except Homework.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk=None):
+        if pk:
+            homework = self.get_object(pk=pk)
+            seralizer = HomeworkSerializer(homework)
+            return Response(seralizer.data)
+
         homeworks = Homework.objects.all()
         seralizer = HomeworkSerializer(homeworks)
         return Response(seralizer.data)
+
+    def post(self, request):
+
+        if not request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = HomeworkSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
