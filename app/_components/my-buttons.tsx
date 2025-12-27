@@ -23,3 +23,11 @@ export function LoginButton() {
         </button>
     );
 }
+
+export function Signup({onClick}: { onClick: () => void}) {
+    return (
+        <button onClick={onClick} className={`bg-green-600 w-full ${BORDER_RADIUS}`}>
+            Signup
+        </button>
+    );
+}
