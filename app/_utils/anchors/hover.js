@@ -1,0 +1,1 @@
+export const HOVER_SIMPLE = 'hover:text-sky-700';
