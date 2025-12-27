@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 
-from .serializers import TodoListSerializer, TodoSerializer
-from .models import TodoList, Todo
+from .serializers import TodoListSerializer, TodoSerializer, HomeworkSerializer
+from .models import TodoList, Todo, Homework
 
 """
 API View can only implicitly call get, delete, etc
@@ -50,7 +50,11 @@ class TodoListView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# TODO: pk usage for getting a single todo object from database
+"""
+Basic todo view for general todo objects
+"""
+
+
 class TodoView(APIView):
     def get_object(self, pk):
         try:
@@ -82,3 +86,36 @@ class TodoView(APIView):
         todo = self.get_object(pk)
         todo.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class HomeworkView(APIView):
+
+    def get_object(self, pk):
+        try:
+            homework = Homework.objects.get(pk=pk)
+            return homework
+        except Homework.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk=None):
+        if pk:
+            homework = self.get_object(pk=pk)
+            seralizer = HomeworkSerializer(homework)
+            return Response(seralizer.data)
+
+        homeworks = Homework.objects.all()
+        seralizer = HomeworkSerializer(homeworks)
+        return Response(seralizer.data)
+
+    def post(self, request):
+
+        if not request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = HomeworkSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
