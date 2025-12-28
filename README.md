@@ -1,5 +1,6 @@
 # **MyDay API**
 
+# Description
 MyDay API is a simple Django REST Framework project designed to help me practice building CRUD-based backend systems. The API focuses on managing basic to-do lists and tasks, making it a lightweight foundation for future web or mobile applications.
 
 This project serves as a learning tool to strengthen my understanding of Django, RESTful API design, serializers, view classes, and handling HTTP requests.
