@@ -130,7 +130,6 @@ class UserManagementView(APIView):
     Set permissions for view for security
     Create seperate loginclassview for users
     Add put functions for user object update
-
     """
 
     # do not expose this in production
