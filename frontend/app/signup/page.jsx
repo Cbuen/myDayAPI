@@ -2,6 +2,7 @@
 import { HOVER_SIMPLE } from "../_utils/anchors/hover";
 import { Signup } from "../_components/my-buttons";
 import { useState } from "react";
+import { getTodoLists } from "../_utils/anchors/api";
 
 
 
@@ -18,6 +19,7 @@ function SignupDetails() {
         else {
             console.log(username);
             console.log(password);
+            getTodoLists();
         }
         
         
