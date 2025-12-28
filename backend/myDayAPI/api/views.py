@@ -2,8 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+from django.contrib.auth.models import User
 
-from .serializers import TodoListSerializer, TodoSerializer, HomeworkSerializer
+from .serializers import TodoListSerializer, TodoSerializer, HomeworkSerializer, UserSerializer
 from .models import TodoList, Todo, Homework
 
 """
@@ -119,3 +120,37 @@ class HomeworkView(APIView):
             return Response(status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserManagementView(APIView):
+    """
+    Docstring for UserManagementView
+    Usermanagment view handles all things realted to user CRUD operations
+    TODO:
+    Set permissions for view for security
+    Create seperate loginclassview for users
+    Add put functiono for user object update
+    """
+
+    # do not expose this in production
+    # for debug purposes to test API and mutiple users
+    def get(self, request, pk=None):
+        if pk:
+            try:
+                user = User.objects.get(pk=pk)
+                serializer = UserSerializer(user)
+                return Response(data=serializer.data)
+            except User.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND) 
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+           
+
