@@ -3,8 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
-from .serializers import TodoListSerializer, TodoSerializer, HomeworkSerializer, UserSerializer
+from .serializers import (
+    TodoListSerializer,
+    TodoSerializer,
+    HomeworkSerializer,
+    UserSerializer,
+)
 from .models import TodoList, Todo, Homework
 
 """
@@ -126,11 +132,12 @@ class UserManagementView(APIView):
     """
     Docstring for UserManagementView
     Usermanagment view handles all things realted to user CRUD operations
+    Signup request json structure {"username": "username", "password": "password"}
     TODO:
     Set permissions for view for security
     Create seperate loginclassview for users
     Add put functions for user object update
-    
+
     """
 
     # do not expose this in production
@@ -142,16 +149,45 @@ class UserManagementView(APIView):
                 serializer = UserSerializer(user)
                 return Response(data=serializer.data)
             except User.DoesNotExist:
-                return Response(status=status.HTTP_404_NOT_FOUND) 
+                return Response(status=status.HTTP_404_NOT_FOUND)
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
-    
+
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-           
 
+
+class LoginUserView(APIView):
+    """
+    LoginUserView handles all user auth related views/activities
+    TODO:
+    Add logout
+    """
+
+    def get(self, request):
+        data = {"message": f"{dir(request.user)}"}
+        return Response(data=data)
+
+    def post(self, request):
+        # login function
+        username = request.data.get("username", "")
+        password = request.data.get("password", "")
+        print(username, password)
+        user = authenticate(username=username, password=password)
+        if request.user.is_authenticated:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"message": f"{request.user} is already logged in!"},
+            )
+        if user is not None:
+            login(request, user)
+            return Response(
+                status=status.HTTP_202_ACCEPTED,
+                data={"message": f"User {request.user} is now logged in"},
+            )
+        return Response(status=status.HTTP_404_NOT_FOUND)

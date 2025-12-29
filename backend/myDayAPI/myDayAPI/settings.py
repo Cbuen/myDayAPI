@@ -80,7 +80,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "myday_api",
         "USER": "root",
-        "PASSWORD": "root",
+        "PASSWORD": "rootroot",
         "HOST": "127.0.0.1",
         "PORT": "3306",
     }
