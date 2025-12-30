@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from .serializers import (
     TodoListSerializer,
@@ -20,7 +20,10 @@ to define custom requests, we must define helper function
 
 
 class TodoListView(APIView):
-    # helper function
+    """
+    Docstring for TodoListView
+    Todo list view for CRUD On todo lists
+    """
     def get_object(self, pk):
         try:
             return TodoList.objects.get(pk=pk)
@@ -56,13 +59,11 @@ class TodoListView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-"""
-Basic todo view for general todo objects
-"""
-
-
 class TodoView(APIView):
+    """
+    Docstring for TodoView
+    View for individual todo object CRUD operations 
+    """
     def get_object(self, pk):
         try:
             return Todo.objects.get(pk=pk)
@@ -96,6 +97,10 @@ class TodoView(APIView):
 
 
 class HomeworkView(APIView):
+    """
+    Docstring for HomeworkView
+    View for later implementation for "student" API section Homework objects
+    """
 
     def get_object(self, pk):
         try:
@@ -164,14 +169,16 @@ class UserManagementView(APIView):
 
 class LoginUserView(APIView):
     """
-    LoginUserView handles all user auth related views/activities
-    TODO:
-    Add logout
+    LoginUserView handles login user auth activites
+    Standard login request:
+    {"username":  "username", "password": "password"}
     """
 
     def get(self, request):
-        data = {"message": f"{dir(request.user)}"}
-        return Response(data=data)
+        if request.user.is_authenticated:
+            return Response(data={"message": f"{request.user} is logged in"})
+        else:
+            return Response(data={"message": "please login!"})
 
     def post(self, request):
         # login function
@@ -190,4 +197,26 @@ class LoginUserView(APIView):
                 status=status.HTTP_202_ACCEPTED,
                 data={"message": f"User {request.user} is now logged in"},
             )
+
         return Response(status=status.HTTP_404_NOT_FOUND)
+    
+
+class LogoutUserView(APIView):
+    """
+    Docstring for LogoutUserView
+    Handles logout user for a logged in / authenticated user
+    """
+    def get(self, request):
+        if request.user.is_authenticated:
+            return Response(data={"message": f"{request.user} is logged in"})
+        else:
+            return Response(data={"message": "please login!"})
+
+    def post(self, request):
+        if request.user.is_authenticated:
+            logged_out_user = request.user
+            logout(request)
+            return Response(status=status.HTTP_200_OK, data={"message": f"{logged_out_user} has been logged out!"})
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED, data={"message": "must be logged in!"})
+
