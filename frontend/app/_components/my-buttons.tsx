@@ -16,9 +16,9 @@ export function DelButton() {
     );
 }
 
-export function LoginButton() {
+export function LoginButton({onClick}: { onClick: () => void}) {
     return (
-        <button className={`bg-green-600 w-full ${BORDER_RADIUS}`}>
+        <button onClick={onClick} className={`bg-green-600 w-full ${BORDER_RADIUS}`}>
             Sign in
         </button>
     );

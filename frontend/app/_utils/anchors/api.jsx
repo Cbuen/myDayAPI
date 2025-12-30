@@ -21,7 +21,7 @@ export async function getTodoLists() {
     }
 }
 
-
+// signup user api
 export async function signupUser(data) {
     const url = `${API_BASE}users/signup`;
     try {
@@ -37,6 +37,24 @@ export async function signupUser(data) {
         console.log(result);
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+export async function loginUser(data) {
+    const url = `${API_BASE}login/`;
+    try {
+        const response = await fetch(url, {method: 'POST',
+            body: JSON.stringify(data),
+            mode: "cors",
+            headers: {"Content-type": "application/json"}
+        });
+        
+        if (!response.ok) {
+            console.error(data=`${response.status}`);
+        }
+    }
+    catch (error) {
+        console.error(data=error.message);
     }
 }
 
