@@ -1,21 +1,51 @@
+"use client"
 import Image from "next/image";
 import { AddButton, DelButton } from "./_components/my-buttons";
-import { todos } from "./_data/testdata";
+import { useState } from "react";
 
+
+
+
+
+/**
+ * TODO:
+ * Refreactor be its own component 
+ */
 function TodoDisplay() {
-  const listItems = todos.map(todo =>
-    <li className="flex flex-row gap-x-5" key={todo}>{todo} <DelButton /></li>
+  const [inputValue, setInputValue] = useState("");
+
+  //TODO: later refractor for db linking
+  const [todos, setTodo] = useState(['Walk the dog', 'Go for run']);
+
+  const listItems = todos.map(t =>
+    <li className="flex flex-row gap-x-5" key={t}>{t} <DelButton /></li>
+    console.log("Hello");
+    
   );
 
   return (
-    <div>
+    <div className="flex flex-col gap-y-2.5">
       <ul className="list-none">
         {listItems}
       </ul>
+      <input onChange={(e) => {
+        setInputValue(e.target.value);
+      }} value={inputValue} type="text" placeholder="Enter a TODO" />
+      <AddButton onClick={() => {
+        console.log("Add Button Click");
+        
+        if (inputValue == "") return;
+
+        const newTodos = [...todos, inputValue];
+        setTodo(newTodos);
+        setInputValue("");
+      }} />
     </div>
 
   );
 }
+
+
 
 
 export default function Home() {
@@ -25,8 +55,7 @@ export default function Home() {
         <div className="flex flex-col gap-5">
           <h1>Landing Page</h1>
           <TodoDisplay />
-          <input type="text" placeholder="Enter a TODO" />
-          <AddButton />
+
         </div>
       </main>
     </div>

@@ -1,8 +1,8 @@
 const BORDER_RADIUS = "rounded-lg";
 
-export function AddButton() {
+export function AddButton({onClick}: {onClick: () => void}) {
     return (
-        <button className={`bg-green-400 ${BORDER_RADIUS}`}>
+        <button onClick={onClick} className={`bg-green-400 ${BORDER_RADIUS}`}>
             Add
         </button>
     );
