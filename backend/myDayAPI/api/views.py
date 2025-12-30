@@ -163,8 +163,8 @@ class UserManagementView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_201_CREATED, data={"message": f"User created {request.data["username"]}"})
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "no form data"})
 
 
 class LoginUserView(APIView):

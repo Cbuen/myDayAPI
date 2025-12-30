@@ -19,8 +19,6 @@ function TodoDisplay() {
 
   const listItems = todos.map(t =>
     <li className="flex flex-row gap-x-5" key={t}>{t} <DelButton /></li>
-    console.log("Hello");
-    
   );
 
   return (
@@ -33,7 +31,6 @@ function TodoDisplay() {
       }} value={inputValue} type="text" placeholder="Enter a TODO" />
       <AddButton onClick={() => {
         console.log("Add Button Click");
-        
         if (inputValue == "") return;
 
         const newTodos = [...todos, inputValue];
