@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "api",
     "corsheaders",
 ]
@@ -80,7 +81,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "myday_api",
         "USER": "root",
-        "PASSWORD": "root",
+        "PASSWORD": "jordan11",
         "HOST": "127.0.0.1",
         "PORT": "3306",
     }
@@ -107,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
+    "http://localhost:3000",
 ]
 
 

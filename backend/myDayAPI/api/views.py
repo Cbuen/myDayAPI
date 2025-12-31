@@ -4,6 +4,7 @@ from rest_framework import status
 from django.http import Http404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from rest_framework.authtoken.models import Token
 
 from .serializers import (
     TodoListSerializer,
@@ -163,7 +164,7 @@ class UserManagementView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(status=status.HTTP_201_CREATED, data={"message": f"User created {request.data["username"]}"})
+            return Response(status=status.HTTP_201_CREATED, data={"message": f"User created {request.data['username']}" } )
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "no form data"})
 
 
@@ -173,7 +174,6 @@ class LoginUserView(APIView):
     Standard login request:
     {"username":  "username", "password": "password"}
     """
-
     def get(self, request):
         if request.user.is_authenticated:
             return Response(data={"message": f"{request.user} is logged in"})
@@ -186,19 +186,21 @@ class LoginUserView(APIView):
         password = request.data.get("password", "")
         print(username, password)
         user = authenticate(username=username, password=password)
-        if request.user.is_authenticated:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"message": f"{request.user} is already logged in!"},
-            )
+
+        # todo: refractor this is unsafe and for testing
         if user is not None:
-            login(request, user)
+            token, _= Token.objects.get_or_create(user=user)
+
             return Response(
                 status=status.HTTP_202_ACCEPTED,
-                data={"message": f"User {request.user} is now logged in"},
+                data={"message": f"User {user} is now logged in",
+                      "user": f"{user}",
+                      "Authorization": f"{token}",
+                }
             )
 
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND, data={
+            "message": "incorrect username or password"})
     
 
 class LogoutUserView(APIView):
