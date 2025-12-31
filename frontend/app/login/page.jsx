@@ -15,9 +15,8 @@ export default function Page() {
             
         }
         else {
-            console.log(username);
-            console.log(password);
-            loginUser({"username": username, "password": password})
+            sessionStorage.setItem("username", username);
+            loginUser({"username": username, "password": password});
         }
         
         

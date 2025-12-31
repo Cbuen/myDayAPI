@@ -25,10 +25,11 @@ export async function getTodoLists() {
 export async function signupUser(data) {
     const url = `${API_BASE}users/signup`;
     try {
-        const response = await fetch(url, {method:'POST',
+        const response = await fetch(url, {
+            method: 'POST',
             body: JSON.stringify(data),
             mode: "cors",
-            headers: {"Content-Type": "application/json"}
+            headers: { "Content-Type": "application/json" }
         });
         if (!response.ok) {
             throw new Error(`Response status ${response.status}`);
@@ -40,21 +41,47 @@ export async function signupUser(data) {
     }
 }
 
-export async function loginUser(data) {
-    const url = `${API_BASE}login/`;
-    try {
-        const response = await fetch(url, {method: 'POST',
-            body: JSON.stringify(data),
-            mode: "cors",
-            headers: {"Content-type": "application/json"}
-        });
-        
-        if (!response.ok) {
-            console.error(data=`${response.status}`);
-        }
+export async function loginUser(credentials) {
+  const url = `${API_BASE}login/`;
+
+  try {
+    // Optional: client-side "already logged in" UI check
+    const existing = sessionStorage.getItem("Authorization");
+    if (existing) {
+      alert("You are already logged in!");
+      return;
     }
-    catch (error) {
-        console.error(data=error.message);
+
+    const response = await fetch(url, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
+
+    // Handle non-2xx responses
+    if (!response.ok) {
+      let msg = `Login failed (${response.status})`;
+      try {
+        const errData = await response.json();
+        if (errData?.message) msg = errData.message;
+      } catch (_) {}
+      alert(msg);
+      return;
     }
+
+    const data = await response.json();
+
+    const authToken = data["Authorization"]; // because your backend returns "Authorization"
+    if (!authToken) {
+      alert("Login response missing token.");
+      return;
+    }
+
+    sessionStorage.setItem("Authorization", authToken);
+    alert("Login successful!");
+  } catch (error) {
+    console.log(error.message);
+  }
 }
 

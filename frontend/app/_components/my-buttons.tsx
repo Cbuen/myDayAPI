@@ -24,7 +24,16 @@ export function LoginButton({onClick}: { onClick: () => void}) {
     );
 }
 
+export function LogoutButton({onClick, visible}: { onClick: () => void, visible: string}) {
+    return (
+        <button onClick={onClick} className={`bg-red-600 ${visible}`}>
+            Logout
+        </button>
+    );
+}
+
 export function Signup({onClick}: { onClick: () => void}) {
+
     return (
         <button onClick={onClick} className={`bg-green-600 w-full ${BORDER_RADIUS}`}>
             Signup

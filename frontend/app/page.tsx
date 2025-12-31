@@ -1,11 +1,18 @@
 "use client"
 import Image from "next/image";
-import { AddButton, DelButton } from "./_components/my-buttons";
+import { AddButton, DelButton, LogoutButton } from "./_components/my-buttons";
 import { useState } from "react";
 
 
-
-
+function handleLogout() {
+  const authToken = sessionStorage.getItem("Authorization")
+  if (authToken) {
+    const username = sessionStorage.getItem("username")
+    alert(`${username} you have been logged out!`)
+    sessionStorage.clear()
+    return;
+  }
+}
 
 /**
  * TODO:
@@ -13,12 +20,17 @@ import { useState } from "react";
  */
 function TodoDisplay() {
   const [inputValue, setInputValue] = useState("");
+  // TODO: REFRACTOR TO USE STATE AVOID INF LOOP ADD LOGIC TO HOME FUNCTION?
+  let logoutVisibility = "hidden";
+  if (sessionStorage.getItem("Authorization")) {
+    logoutVisibility = "visible";
+  }
 
   //TODO: later refractor for db linking
   const [todos, setTodo] = useState(['Walk the dog', 'Go for run']);
 
   const listItems = todos.map(t =>
-    <li className="flex flex-row gap-x-5" key={t}>{t} <DelButton /></li>
+    <li className="flex flex-row gap-x-5 overflow-y-scroll" key={t}>{t} <DelButton /></li>
   );
 
   return (
@@ -31,12 +43,16 @@ function TodoDisplay() {
       }} value={inputValue} type="text" placeholder="Enter a TODO" />
       <AddButton onClick={() => {
         console.log("Add Button Click");
-        if (inputValue == "") return;
+        if (inputValue == "" || todos.includes(inputValue)){
+          alert(`Your entry '${inputValue}' is invalid!`);
+          return;
+        } 
 
         const newTodos = [...todos, inputValue];
         setTodo(newTodos);
         setInputValue("");
       }} />
+      <LogoutButton onClick={handleLogout} visible={logoutVisibility}/>
     </div>
 
   );
@@ -52,7 +68,6 @@ export default function Home() {
         <div className="flex flex-col gap-5">
           <h1>Landing Page</h1>
           <TodoDisplay />
-
         </div>
       </main>
     </div>
